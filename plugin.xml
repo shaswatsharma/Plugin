@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin
+	name = "FirstPlugin"
+>
+	<requires>
+        <import plugin="org.eclipse.jface.text" export="true"/>
+    </requires>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="Sample Category"
+            id="FirstPlugin.commands.category">
+      </category>
+     
+      <command
+            name="Sample Command"
+            categoryId="FirstPlugin.commands.category"
+            id="FirstPlugin.commands.sampleCommand">
+      </command>
+      
+      <command
+            name="Check for JUnits"
+            categoryId="FirstPlugin.commands.category"
+            id="FirstPlugin.commands.JUnit">
+      </command>
+      
+   </extension>
+   
+   <extension point="org.eclipse.ui.handlers">
+    <handler 
+        commandId="org.eclipse.ui.file.save"
+        class="firstplugin.handlers.SampleHandler">
+        <activeWhen>
+            <with variable="activeWorkbenchWindow">
+                <instanceof value="org.eclipse.ui.IWorkbenchWindow"/>
+            </with>
+        </activeWhen>
+    </handler>
+	</extension> 
+	
+	 <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+      		
+            commandId="FirstPlugin.commands.sampleCommand"
+            class="firstplugin.handlers.SampleHandler">
+      </handler>
+      <handler
+            commandId="FirstPlugin.commands.JUnit"
+            class="firstplugin.handlers.JUnitHandler">
+      </handler>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="FirstPlugin.commands.sampleCommand"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+6"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+      <key
+            commandId="FirstPlugin.commands.JUnit"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+7"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+   </extension>
+   
+   
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               label="SAP Plugin"
+               mnemonic="M"
+               id="FirstPlugin.menus.sampleMenu">
+            
+            <command
+                  commandId="FirstPlugin.commands.sampleCommand"
+                  mnemonic="S"
+                  id="FirstPlugin.menus.sampleCommand">
+            </command>
+            
+            <command
+                  commandId="FirstPlugin.commands.JUnit"
+                  mnemonic="J"
+                  id="FirstPlugin.menus.JUnit">
+            </command>
+         </menu>
+      </menuContribution>
+     
+     
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="FirstPlugin.toolbars.sampleToolbar">
+            <command
+                  commandId="FirstPlugin.commands.sampleCommand"
+                  icon="icons/sample.gif"
+                  tooltip="Say hello world"
+                  id="FirstPlugin.toolbars.sampleCommand">
+            </command>
+            <command
+                  commandId="FirstPlugin.commands.JUnit"
+                  icon="icons/sample.gif"
+                  tooltip="Check for JUnits"
+                  id="FirstPlugin.toolbars.JUnit">
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+
+</plugin>
