@@ -14,3 +14,4 @@ Bundle-ClassPath: Library/org.eclipse.jface.text_3.5.0.jar,
  Library/eclipse-runtime-2.1.0.jar,
  Library/org.eclipse.core.resources.jar,
  Library/org.eclipse.core.resources_3.10.1.v20150725-1910.jar
+Import-Package: org.eclipse.ui.editors.text
