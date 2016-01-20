@@ -98,7 +98,8 @@ public class MethodParser {
 		int testCases = 0;
 		String methods = "";
 
-		methods += "\n\n" + createOriginalMethod();
+		if (condition.size() == 0)
+			methods += "\n\n" + createOriginalMethod();
 
 		for (int i = 0; i < condition.size(); i++) {
 			String keyword = condition.get(i);
@@ -147,14 +148,18 @@ public class MethodParser {
 		fileInfo.setList(null);
 		fileInfo.setName(name);
 		fileInfo.setReturnType("void");
+		fileInfo.setBody("\tAssertFalse(\"true\");");
 		return fileInfo.createMethod();
 
 	}
 
 	private String createOriginalMethod() {
-
 		String comment = "This is a Auto Generated JUnit test case for \"" + methodDetails.getName() + "\".";
-		String name = methodDetails.getName() + "Test";
+		String name = "";
+		if (!methodDetails.getName().contains("Test"))
+			name = methodDetails.getName() + "Test";
+		else
+			name = methodDetails.getName();
 		FileInfo fileInfo = new FileInfo();
 		fileInfo.setAccessModifier("public");
 		fileInfo.setAccessSpecifier("");

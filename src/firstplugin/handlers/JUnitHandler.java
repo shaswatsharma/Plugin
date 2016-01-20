@@ -62,8 +62,8 @@ public class JUnitHandler extends AbstractHandler {
 			return null;
 		ITextEditor ite = (ITextEditor) editor;
 		IDocument doc = ite.getDocumentProvider().getDocument(ite.getEditorInput());
-
 		String classBody = createJUnitCases(doc.get());
+		System.out.println(classBody);
 
 		boolean isCreated;
 		try {
@@ -77,17 +77,37 @@ public class JUnitHandler extends AbstractHandler {
 			IFile file = activeProject.getFile("Test" + fileName);
 			try {
 				InputStream is = file.getContents();
+				// existing JUnit class body
 				String existingClassBody = getStringFromInputStream(is);
-				ArrayList<MethodDetails> newMethods = checkForNewMethods(classBody, existingClassBody);
+				System.out.println(existingClassBody);
+				/*
+				 * // Adding New JUnits for Existing Method's new conditions
+				 * ArrayList<MethodDetails> newMethods =
+				 * addJUnitsForNewConditions(classBody, existingClassBody); if
+				 * (newMethods != null) { existingClassBody =
+				 * existingClassBody.substring(0,
+				 * existingClassBody.trim().length() - 1); existingClassBody =
+				 * existingClassBody + createNewJUnitCases(newMethods) + "\n}";
+				 * is = new ByteArrayInputStream(existingClassBody.getBytes());
+				 * file.setContents(is, true, true, null);
+				 * 
+				 * MessageDialog.openInformation(window.getShell(),
+				 * "FirstPlugin", "New test methods added to existing " +
+				 * fileName + "Test JUnit Class."); }
+				 * 
+				 */
 
+				ArrayList<MethodDetails> newMethods = checkForNewMethods(classBody, existingClassBody);
+				String newClassBody = "";
+				// Adding New Methods
 				if (newMethods != null) {
 					existingClassBody = existingClassBody.substring(0, existingClassBody.trim().length() - 1);
-					String newClassBody = existingClassBody + createNewJUnitCases(newMethods);
+					newClassBody = existingClassBody + createNewJUnitCases(newMethods) + "\n}";
 					is = new ByteArrayInputStream(newClassBody.getBytes());
 					file.setContents(is, true, true, null);
 
 					MessageDialog.openInformation(window.getShell(), "FirstPlugin",
-							"New test methods added to existing " + fileName + " JUnit Class.");
+							"New test methods added to existing " + fileName + "Test JUnit Class.");
 				}
 
 			} catch (CoreException e) {
@@ -96,6 +116,35 @@ public class JUnitHandler extends AbstractHandler {
 		}
 
 		return null;
+	}
+
+	private ArrayList<MethodDetails> addJUnitsForNewConditions(String classBody, String newClassBody) {
+		ClassParser classParser = new ClassParser(classBody);
+		ArrayList<MethodDetails> changedJUnitMethods = classParser.getAllMethodDetails();
+
+		classParser = new ClassParser(newClassBody);
+		ArrayList<MethodDetails> testClassMethods = classParser.getAllMethodDetails();
+
+		ArrayList<MethodDetails> newMethods = new ArrayList<MethodDetails>();
+
+		for (int i = 0; i < changedJUnitMethods.size(); i++) {
+			boolean isNew = true;
+			for (int j = 0; j < testClassMethods.size(); j++) {
+				if (changedJUnitMethods.get(i).getName().equals(testClassMethods.get(j).getName()))
+					isNew = false;
+			}
+			if (isNew) {
+				changedJUnitMethods.get(i).setName(changedJUnitMethods.get(i).getName().substring(0,
+						changedJUnitMethods.get(i).getName().trim().length() - 4));
+				newMethods.add(changedJUnitMethods.get(i));
+			}
+		}
+
+		if (newMethods.size() > 0)
+			return newMethods;
+		else
+			return null;
+
 	}
 
 	private ArrayList<MethodDetails> checkForNewMethods(String newContent, String oldContent) {
@@ -112,7 +161,7 @@ public class JUnitHandler extends AbstractHandler {
 					isNew = false;
 			}
 			if (isNew) {
-				newList.get(i).setName(newList.get(i).getName().replace("Test", ""));
+				newList.get(i).setName(newList.get(i).getName().substring(0, newList.get(i).getName().trim().length()));
 				newMethods.add(newList.get(i));
 			}
 		}
