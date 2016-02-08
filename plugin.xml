@@ -1,114 +1,106 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
-<plugin
-	name = "FirstPlugin"
->
-	<requires>
-        <import plugin="org.eclipse.jface.text" export="true"/>
-    </requires>
+<plugin>
+
+	<extension
+		point="org.eclipse.core.filebuffers.annotationModelCreation">
+		<factory
+			extensions="*"
+			class="org.eclipse.ui.texteditor.ResourceMarkerAnnotationModelFactory">
+		</factory>
+	</extension>
 
    <extension
          point="org.eclipse.ui.commands">
       <category
-            name="Sample Category"
-            id="FirstPlugin.commands.category">
+            name="Code Check"
+            id="SAP_Code_Governance_tool.commands.codeCheckCategory">
       </category>
-     
       <command
-            name="Sample Command"
-            categoryId="FirstPlugin.commands.category"
-            id="FirstPlugin.commands.sampleCommand">
+            name="Code Check"
+            categoryId="SAP_Code_Governance_tool.commands.codeCheckCategory"
+            id="SAP_Code_Governance_tool.commands.codeCheckCommand">
       </command>
       
+      <category
+            name="Create JUnits"
+            id="SAP_Code_Governance_tool.commands.jUnitsCategory">
+      </category>
       <command
-            name="Check for JUnits"
-            categoryId="FirstPlugin.commands.category"
-            id="FirstPlugin.commands.JUnit">
+            name="Create JUnits"
+            categoryId="SAP_Code_Governance_tool.commands.jUnitsCategory"
+            id="SAP_Code_Governance_tool.commands.jUnitCommand">
       </command>
-      
    </extension>
-   
-   <extension point="org.eclipse.ui.handlers">
-    <handler 
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
         commandId="org.eclipse.ui.file.save"
-        class="firstplugin.handlers.SampleHandler">
+        class="sap_code_governance_tool.handlers.SaveHandler">
         <activeWhen>
             <with variable="activeWorkbenchWindow">
                 <instanceof value="org.eclipse.ui.IWorkbenchWindow"/>
             </with>
         </activeWhen>
-    </handler>
-	</extension> 
-	
-	 <extension
-         point="org.eclipse.ui.handlers">
-      <handler
-      		
-            commandId="FirstPlugin.commands.sampleCommand"
-            class="firstplugin.handlers.SampleHandler">
       </handler>
+      
       <handler
-            commandId="FirstPlugin.commands.JUnit"
-            class="firstplugin.handlers.JUnitHandler">
+            commandId="SAP_Code_Governance_tool.commands.jUnitCommand"
+            class="sap_code_governance_tool.handlers.JUnitHandler">
       </handler>
    </extension>
-   
    <extension
          point="org.eclipse.ui.bindings">
       <key
-            commandId="FirstPlugin.commands.sampleCommand"
+            commandId="SAP_Code_Governance_tool.commands.codeCheckCommand"
             contextId="org.eclipse.ui.contexts.window"
-            sequence="M1+6"
+            sequence="M1+s"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>
+      
       <key
-            commandId="FirstPlugin.commands.JUnit"
+            commandId="SAP_Code_Governance_tool.commands.jUnitCommand"
             contextId="org.eclipse.ui.contexts.window"
-            sequence="M1+7"
+            sequence="M1+j"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>
    </extension>
-   
-   
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
          <menu
-               label="SAP Plugin"
+               label="SAP Code Governance"
                mnemonic="M"
-               id="FirstPlugin.menus.sampleMenu">
-            
+               id="SAP_Code_Governance_tool.menus.menu">
             <command
-                  commandId="FirstPlugin.commands.sampleCommand"
+                  commandId="SAP_Code_Governance_tool.commands.codeCheckCommand"
                   mnemonic="S"
-                  id="FirstPlugin.menus.sampleCommand">
+                  id="SAP_Code_Governance_tool.menus.codeCheck">
             </command>
             
             <command
-                  commandId="FirstPlugin.commands.JUnit"
+                  commandId="SAP_Code_Governance_tool.commands.jUnitCommand"
                   mnemonic="J"
-                  id="FirstPlugin.menus.JUnit">
+                  id="SAP_Code_Governance_tool.menus.jUnit">
             </command>
          </menu>
       </menuContribution>
-     
-     
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
-         <toolbar
-               id="FirstPlugin.toolbars.sampleToolbar">
+          <toolbar
+               id="SAP_Code_Governance_tool.toolbars.toolbar">
             <command
-                  commandId="FirstPlugin.commands.sampleCommand"
+                  commandId="SAP_Code_Governance_tool.commands.codeCheckCommand"
                   icon="icons/sample.gif"
-                  tooltip="Say hello world"
-                  id="FirstPlugin.toolbars.sampleCommand">
+                  tooltip="SAP Code Governance"
+                  id="SAP_Code_Governance_tool.toolbars.codeCheck">
             </command>
             <command
-                  commandId="FirstPlugin.commands.JUnit"
+                  commandId="SAP_Code_Governance.commands.jUnitCommand"
                   icon="icons/sample.gif"
-                  tooltip="Check for JUnits"
-                  id="FirstPlugin.toolbars.JUnit">
+                  tooltip="SAP Code Governance"
+                  id="SAP_Code_Governance_tool.toolbars.jUnit">
             </command>
          </toolbar>
       </menuContribution>

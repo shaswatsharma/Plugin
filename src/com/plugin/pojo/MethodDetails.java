@@ -1,24 +1,17 @@
 package com.plugin.pojo;
 
+import java.util.List;
+
 public class MethodDetails {
 	private String returnType;
 	private String name;
 	private String specifier;
 	private String modifier;
 	private String body;
-	private ParameterDetails parameters;
+	private List<ParameterDetails> parameters;
 	private String exception;
 	private String startingIndex;
 	private String endingIndex;
-	private int totalParameters;
-
-	public int getTotalParameters() {
-		return totalParameters;
-	}
-
-	public void setTotalParameters(int totalParameters) {
-		this.totalParameters = totalParameters;
-	}
 
 	public void setStartingIndex(String startingIndex) {
 		this.startingIndex = startingIndex;
@@ -76,11 +69,11 @@ public class MethodDetails {
 		this.body = body;
 	}
 
-	public ParameterDetails getParameters() {
+	public List<ParameterDetails> getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(ParameterDetails parameters) {
+	public void setParameters(List<ParameterDetails> parameters) {
 		this.parameters = parameters;
 	}
 

@@ -10,6 +10,8 @@ import java.util.Map;
 import com.plugin.util.Constants;
 
 public class CommentValidator {
+	public static int READ_LIMIT = 100000;
+
 	public List<Map<String, Integer>> checkComments(String content) {
 		List<Map<String, Integer>> list = null;
 		try {
@@ -19,6 +21,8 @@ public class CommentValidator {
 			String line = null;
 			int count = 0;
 			int start = 1;
+			int endByteCount = 0;
+			int startByteCount = 0;
 			boolean value = false;
 			while (true) {
 				Map<String, Integer> map = new HashMap<String, Integer>();
@@ -28,11 +32,14 @@ public class CommentValidator {
 					if (line.contains("class ")) {
 						value = true;
 						start = lr.getLineNumber();
+						startByteCount = endByteCount;
 					}
+					endByteCount += line.length();
 				}
 
 				if (value) {
 					while ((line = lr.readLine()) != null) {
+						endByteCount += line.length();
 						if (count != 0 && line.trim().isEmpty()) {
 							count--;
 						}
@@ -50,14 +57,19 @@ public class CommentValidator {
 						map.put(Constants.KEY_START, start);
 						map.put(Constants.KEY_END, lr.getLineNumber() - 1);
 						map.put(Constants.KEY_COUNT, count);
+						map.put(Constants.KEY_CHAR_START, startByteCount);
+						map.put(Constants.KEY_CHAR_END, endByteCount);
 						list.add(map);
 					}
 
-					while (flag && (line = lr.readLine()) != null) {
-						if (line.contains("*/"))
+					while (flag && (line = lr.readLine()) != null && (endByteCount += line.length()) > 0) {
+						if (line.contains("*/")) {
+							flag = false;
 							break;
+						}
 					}
 					start = lr.getLineNumber();
+					startByteCount = endByteCount;
 					// System.out.println(start + 1000);
 					count = 0;
 				}
