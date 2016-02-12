@@ -1,35 +1,35 @@
 package sap_code_governance_tool.handlers;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.texteditor.ITextEditor;
-
 import com.plugin.pojo.ClassDetails;
 import com.plugin.pojo.ClassVariableDetails;
 import com.plugin.pojo.MethodDetails;
 import com.plugin.util.ClassParser;
 import com.plugin.util.Constants;
 import com.plugin.validator.NewCommentValidator;
+import net.sourceforge.pmd.PMD;
 
 /**
  * Our sample handler extends AbstractHandler, an IHandler base class.
@@ -38,30 +38,76 @@ import com.plugin.validator.NewCommentValidator;
  * @see org.eclipse.core.commands.AbstractHandler
  */
 public class SaveHandler extends AbstractHandler {
+	
+	private static final String DIR_NAME="C:\\SAP_PMD_REPORT";
+	
+	
 	/**
 	 * The constructor.
 	 */
 	public SaveHandler() {
+		
 	}
 
 	/**
 	 * the command has been executed, so extract extract the needed information
 	 * from the application context.
 	 */
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	public Object execute(ExecutionEvent event) throws ExecutionException 
+	{
+		
+		FileOutputStream fos = null;
+		
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		
 		IEditorPart editor = page.getActiveEditor();
-
+		
 		if (editor == null)
 			return null;
 
 		if (!(editor instanceof ITextEditor))
 			return null;
-
+		
+		
 		Constants.ACTIVE_FILE_NAME = editor.getTitle();
 		Constants.ACTIVE_FILE_PATH = editor.getTitleToolTip();
+		
+		
+        IEditorInput input=editor.getEditorInput();
+		
+		IFile iFile = (IFile)input.getAdapter(IFile.class);
+		
+		File directory = new File(DIR_NAME);
+		if (!directory.exists()) {
+			if (directory.mkdir()) {
+				System.out.println("Directory is created!");
+			} else {
+				System.out.println("Failed to create directory!");
+			}
+		}
+
+		PrintStream console = System.out;
+		
+		File file = new File(DIR_NAME+"\\"+Constants.ACTIVE_FILE_NAME.substring(0, Constants.ACTIVE_FILE_NAME.indexOf("."))+"_Report.csv");
+		
+		
+		try {
+			fos = new FileOutputStream(file);
+
+			PrintStream ps = new PrintStream(fos);
+			System.setOut(ps);
+			PMD.main(new String[] {iFile.getRawLocation().toOSString(), "csv", "unusedcode" });
+
+			System.setOut(console);
+
+		} 
+		catch (FileNotFoundException e) 
+		{
+			System.out.println("Unable to locate the target file :"+e.getMessage());
+
+		}
 
 		ITextEditor ite = (ITextEditor) editor;
 		IDocument doc = ite.getDocumentProvider().getDocument(ite.getEditorInput());
